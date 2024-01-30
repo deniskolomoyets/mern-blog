@@ -20,25 +20,42 @@ const app = express();
 app.use(express.json()); //express shoud read json response
 
 app.post("/auth/register", registerValidation, async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json(errors.array());
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json(errors.array());
+    }
+
+    const password = req.body.password;
+    const salt = await bcrypt.genSalt(10); //password encryption algorithm
+    const passwordHash = await bcrypt.hash(password, salt);
+
+    const doc = new UserModel({
+      email: req.body.email,
+      fullName: req.body.fullName,
+      avatarUrl: req.body.avatarUrl,
+      passwordHash,
+    });
+
+    const user = await doc.save(); //save the result that Mongodb sends (in const user)
+
+    const token = jwt.sign(
+      {
+        _id: user._id,
+      },
+      "secret123", //second param, with this key I'll encrypt _id token
+      {
+        expiresIn: "30d", //how long token can live
+      }
+    );
+
+    res.json({ ...user, token }); //want to return user and token information
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Failed to register",
+    });
   }
-
-  const password = req.body.password;
-  const salt = await bcrypt.genSalt(10); //password encryption algorithm
-  const passwordHash = await bcrypt.hash(password, salt);
-
-  const doc = new UserModel({
-    email: req.body.email,
-    fullName: req.body.fullName,
-    avatarUrl: req.body.avatarUrl,
-    passwordHash,
-  });
-
-  const user = await doc.save(); //save the result that Mongodb sends (in const user)
-
-  res.json(user);
 });
 
 app.listen(4444, (err) => {
