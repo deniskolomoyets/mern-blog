@@ -10,7 +10,7 @@ import UserModel from "./models/User.js";
 
 mongoose
   .connect(
-    "mongodb+srv://kolomoetc:wwwwww@cluster0.muaios8.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://kolomoetc:wwwwww@cluster0.muaios8.mongodb.net/blog?retryWrites=true&w=majority"
   )
   .then(() => console.log("DB ok"))
   .catch((err) => console.log("DB error", err));
