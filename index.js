@@ -28,13 +28,13 @@ app.post("/auth/register", registerValidation, async (req, res) => {
 
     const password = req.body.password;
     const salt = await bcrypt.genSalt(10); //password encryption algorithm
-    const passwordHash = await bcrypt.hash(password, salt);
+    const hash = await bcrypt.hash(password, salt);
 
     const doc = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,
       avatarUrl: req.body.avatarUrl,
-      passwordHash,
+      passwordHash: hash,
     });
 
     const user = await doc.save(); //save the result that Mongodb sends (in const user)
@@ -49,7 +49,9 @@ app.post("/auth/register", registerValidation, async (req, res) => {
       }
     );
 
-    res.json({ ...user, token }); //want to return user and token information
+    const { passwordHash, ...userData } = user._doc;
+
+    res.json({ ...userData, token }); //want to return user and token information
   } catch (error) {
     console.log(error);
     res.status(500).json({
