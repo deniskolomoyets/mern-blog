@@ -19,6 +19,45 @@ const app = express();
 
 app.use(express.json()); //express shoud read json response
 
+app.post("/auth/login", async (req, res) => {
+  try {
+    const user = await UserModel.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    const isValidPass = await bcrypt.compare(
+      req.body.password,
+      user._doc.passwordHash
+    );
+
+    if (!isValidPass) {
+      return res.status(400).json({
+        message: "Incorrect password",
+      });
+    }
+    const token = jwt.sign(
+      {
+        _id: user._id,
+      },
+      "secret123", //second param, with this key I'll encrypt _id token
+      {
+        expiresIn: "30d", //how long token can live
+      }
+    );
+
+    const { passwordHash, ...userData } = user._doc;
+
+    res.json({ ...userData, token });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Failed to log in",
+    });
+  }
+});
+
 app.post("/auth/register", registerValidation, async (req, res) => {
   try {
     const errors = validationResult(req);
