@@ -13,6 +13,7 @@ import checkAuth from "./utils/checkAuth.js";
 
 import * as UserController from "./controllers/UserController.js";
 import * as PostController from "./controllers/PostController.js";
+import handleValidationErrors from "./utils/handleValidationErrors.js";
 
 mongoose
   .connect(
@@ -37,8 +38,18 @@ const upload = multer({ storage });
 app.use(express.json()); //express shoud read json response
 app.use("/uploads", express.static("uploads")); //get request to retrieve a static file
 
-app.post("/auth/login", loginValidation, UserController.login);
-app.post("/auth/register", registerValidation, UserController.register);
+app.post(
+  "/auth/login",
+  loginValidation,
+  handleValidationErrors,
+  UserController.login
+);
+app.post(
+  "/auth/register",
+  registerValidation,
+  handleValidationErrors,
+  UserController.register
+);
 app.get("/auth/me", checkAuth, UserController.getMe);
 
 app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
@@ -49,9 +60,21 @@ app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
 
 app.get("/posts", PostController.getAll); //receiving all articles
 app.get("/posts/:id", PostController.getOne); //receiving one article
-app.post("/posts", checkAuth, postCreateValidation, PostController.create); //create post
+app.post(
+  "/posts",
+  checkAuth,
+  handleValidationErrors,
+  postCreateValidation,
+  PostController.create
+); //create post
 app.delete("/posts/:id", checkAuth, PostController.remove); //delete post
-app.patch("/posts/:id", checkAuth, PostController.update); //update post
+app.patch(
+  "/posts/:id",
+  checkAuth,
+  handleValidationErrors,
+  postCreateValidation,
+  PostController.update
+); //update post
 
 app.listen(4444, (err) => {
   if (err) {
