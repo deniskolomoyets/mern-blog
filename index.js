@@ -35,7 +35,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.use(express.json()); //express shoud read json response
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("uploads")); //get request to retrieve a static file
 
 app.post("/auth/login", loginValidation, UserController.login);
 app.post("/auth/register", registerValidation, UserController.register);
