@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import mongoose from "mongoose";
-
+import cors from "cors";
 import {
   registerValidation,
   loginValidation,
@@ -33,6 +33,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.use(express.json()); //express shoud read json response
+app.use(cors());
 app.use("/uploads", express.static("uploads")); //get request to retrieve a static file
 
 app.post(
