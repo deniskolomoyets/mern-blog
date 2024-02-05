@@ -3,7 +3,7 @@ import PostModel from "../models/Post.js";
 export const getAll = async (req, res) => {
   try {
     const posts = await PostModel.find()
-      .populate({ path: "user", select: ["name", "avatar"] }) // allows you to explicitly specify which fields you want to select from the associated user model, excluding passwordHash
+      .populate({ path: "user", select: ["fullName", "avatarUrl"] }) // allows you to explicitly specify which fields you want to select from the associated user model, excluding passwordHash
       .exec(); //In Mongoose, the exec() method is used to execute database queries
     //'Connecting communications' when receiving documents. In Model I did it through 'type: mongoose.Schema.Types.ObjectId'
     res.json(posts);
