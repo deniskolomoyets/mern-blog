@@ -56,7 +56,10 @@ app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
   });
 }); //single-middleware multer.
 
+app.get("/tags", PostController.getLastTags);
+
 app.get("/posts", PostController.getAll); //receiving all articles
+app.get("/posts/tags", PostController.getLastTags);
 app.get("/posts/:id", PostController.getOne); //receiving one article
 app.post(
   "/posts",
