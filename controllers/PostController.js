@@ -58,6 +58,7 @@ export const getOne = async (req, res) => {
 
         res.json(doc);
       })
+      .populate("user")
       .catch((err) => {
         if (err) {
           console.log(err);
@@ -109,7 +110,7 @@ export const create = async (req, res) => {
   try {
     const doc = new PostModel({
       title: req.body.title,
-      text: req.body.title,
+      text: req.body.text,
       imageUrl: req.body.imageUrl,
       tags: req.body.tags,
       user: req.userId, //userId get when do an authorization check
