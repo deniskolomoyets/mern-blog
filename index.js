@@ -77,6 +77,8 @@ app.patch(
   PostController.update
 ); //update post
 
+app.patch("/posts", PostController.sortByNewest);
+
 app.listen(4444, (err) => {
   if (err) {
     return console.log(err);

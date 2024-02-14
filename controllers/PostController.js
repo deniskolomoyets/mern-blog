@@ -148,3 +148,10 @@ export const update = async (req, res) => {
     });
   }
 };
+
+export const sortByNewest = async (req, res) => {
+  try {
+    const posts = await PostModel.sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (err) {}
+};
